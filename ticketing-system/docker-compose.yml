@@ -1,119 +1,40 @@
-# version: "3.8"
-
-# services:
-#   gateway:
-#     build:
-#       context: ./gateway
-#       dockerfile: Dockerfile
-#     ports:
-#       - "3000:3000"          # Gateway exposed on host port 3000
-#     depends_on:
-#       - freshdesk-service
-#       - salesforce-service
-#       - zendesk-service
-
-#   freshdesk-service:
-#     build:
-#       context: ./freshdesk-service
-#       dockerfile: Dockerfile
-#     ports:
-#       - "3001:3001"
-#     env_file:
-#       - ./freshdesk-service/.env
-
-#   salesforce-service:
-#     build:
-#       context: ./salesforce-service
-#       dockerfile: Dockerfile
-#     ports:
-#       - "3002:3002"
-#     env_file:
-#       - ./salesforce-service/.env
-
-#   zendesk-service:
-#     build:
-#       context: ./zendesk-service
-#       dockerfile: Dockerfile
-#     ports:
-#       - "3003:3003"
-#     env_file:
-#       - ./zendesk-service/.env
 version: "3.8"
 
-networks:
-  web:
-    external: true
-
 services:
-  traefik:
-    image: traefik:v2.10
-    restart: always
-    command:
-      - --api.insecure=true
-      - --providers.docker
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      - --certificatesresolvers.myresolver.acme.tlschallenge
-      - --certificatesresolvers.myresolver.acme.email=your-email@example.com
-      - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
-    ports:
-      - "80:80"
-      - "443:443"
-      - "8080:8080" # Traefik dashboard
-    volumes:
-      - ./acme.json:/letsencrypt/acme.json
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - web
-
   gateway:
     build:
       context: ./gateway
       dockerfile: Dockerfile
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.gateway.rule=Host(`crm.exequte.ai`) && PathPrefix(`/crm-cti/`)"
-      - "traefik.http.routers.gateway.entrypoints=web,websecure"
-      - "traefik.http.routers.gateway.tls=true"
-      - "traefik.http.routers.gateway.tls.certresolver=myresolver"
-    expose:
-      - "3000"
+    ports:
+      - "3000:3000"          # Gateway exposed on host port 3000
     depends_on:
       - freshdesk-service
       - salesforce-service
       - zendesk-service
-    networks:
-      - web
 
   freshdesk-service:
     build:
       context: ./freshdesk-service
       dockerfile: Dockerfile
-    expose:
-      - "3001"
+    ports:
+      - "3001:3001"
     env_file:
       - ./freshdesk-service/.env
-    networks:
-      - web
 
   salesforce-service:
     build:
       context: ./salesforce-service
       dockerfile: Dockerfile
-    expose:
-      - "3002"
+    ports:
+      - "3002:3002"
     env_file:
       - ./salesforce-service/.env
-    networks:
-      - web
 
   zendesk-service:
-  build:
-    context: ./zendesk-service
-    dockerfile: Dockerfile
-  expose:
-    - "3003"
-  env_file:
-    - ./zendesk-service/.env
-  networks:
-    - web
+    build:
+      context: ./zendesk-service
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+    env_file:
+      - ./zendesk-service/.env
