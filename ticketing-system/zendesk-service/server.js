@@ -5,6 +5,7 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3003;
 
+
 const { ZD_SUBDOMAIN, ZD_EMAIL, ZD_API_TOKEN } = process.env;
 const base64 = Buffer.from(`${ZD_EMAIL}/token:${ZD_API_TOKEN}`).toString('base64');
 

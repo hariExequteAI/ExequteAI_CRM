@@ -1,3 +1,43 @@
+# version: "3.8"
+
+# services:
+#   gateway:
+#     build:
+#       context: ./gateway
+#       dockerfile: Dockerfile
+#     ports:
+#       - "3000:3000"          # Gateway exposed on host port 3000
+#     depends_on:
+#       - freshdesk-service
+#       - salesforce-service
+#       - zendesk-service
+
+#   freshdesk-service:
+#     build:
+#       context: ./freshdesk-service
+#       dockerfile: Dockerfile
+#     ports:
+#       - "3001:3001"
+#     env_file:
+#       - ./freshdesk-service/.env
+
+#   salesforce-service:
+#     build:
+#       context: ./salesforce-service
+#       dockerfile: Dockerfile
+#     ports:
+#       - "3002:3002"
+#     env_file:
+#       - ./salesforce-service/.env
+
+#   zendesk-service:
+#     build:
+#       context: ./zendesk-service
+#       dockerfile: Dockerfile
+#     ports:
+#       - "3003:3003"
+#     env_file:
+#       - ./zendesk-service/.env
 version: "3.8"
 
 services:
@@ -5,8 +45,8 @@ services:
     build:
       context: ./gateway
       dockerfile: Dockerfile
-    ports:
-      - "3000:3000"          # Gateway exposed on host port 3000
+    expose:
+      - "3000"
     depends_on:
       - freshdesk-service
       - salesforce-service
@@ -17,7 +57,7 @@ services:
       context: ./freshdesk-service
       dockerfile: Dockerfile
     ports:
-      - "3001:3001"
+      - "3001"
     env_file:
       - ./freshdesk-service/.env
 
@@ -26,7 +66,7 @@ services:
       context: ./salesforce-service
       dockerfile: Dockerfile
     ports:
-      - "3002:3002"
+      - "3002"
     env_file:
       - ./salesforce-service/.env
 
@@ -35,6 +75,17 @@ services:
       context: ./zendesk-service
       dockerfile: Dockerfile
     ports:
-      - "3003:3003"
+      - "3003"
     env_file:
       - ./zendesk-service/.env
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./certs/crm.exequte.ai_Apache:/etc/nginx/ssl
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - gateway
