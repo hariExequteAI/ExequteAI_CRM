@@ -6,11 +6,12 @@ services:
       context: ./gateway
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"          # Gateway exposed on host port 3000
+      - "3000:3000"
     depends_on:
       - freshdesk-service
       - salesforce-service
       - zendesk-service
+    restart: unless-stopped
 
   freshdesk-service:
     build:
@@ -20,6 +21,7 @@ services:
       - "3001:3001"
     env_file:
       - ./freshdesk-service/.env
+    restart: unless-stopped
 
   salesforce-service:
     build:
@@ -29,6 +31,7 @@ services:
       - "3002:3002"
     env_file:
       - ./salesforce-service/.env
+    restart: unless-stopped
 
   zendesk-service:
     build:
@@ -38,3 +41,4 @@ services:
       - "3003:3003"
     env_file:
       - ./zendesk-service/.env
+    restart: unless-stopped
