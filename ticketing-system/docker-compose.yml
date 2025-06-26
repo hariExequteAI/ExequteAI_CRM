@@ -108,12 +108,12 @@ services:
       - web
 
   zendesk-service:
-    build:
-      context: ./zendesk-service
+  build:
+    context: ./zendesk-service
     dockerfile: Dockerfile
-    expose:
-      - "3003"
-    env_file:
-      - ./zendesk-service/.env
-    networks:
-      - web
+  expose:
+    - "3003"
+  env_file:
+    - ./zendesk-service/.env
+  networks:
+    - web
